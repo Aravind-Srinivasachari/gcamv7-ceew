@@ -136,6 +136,28 @@ India,trn_freight_road,Truck,Liquids,2085,refined liquids enduse,5490.898661,Ind
 India,trn_freight_road,Truck,Liquids,2090,refined liquids enduse,5446.519003,India
 India,trn_freight_road,Truck,Liquids,2095,refined liquids enduse,5402.139345,India
 India,trn_freight_road,Truck,Liquids,2100,refined liquids enduse,5402.139345,India
+India,trn_freight_road,Truck,NG,1975,delivered gas,7510.824697,India
+India,trn_freight_road,Truck,NG,1990,delivered gas,7510.824697,India
+India,trn_freight_road,Truck,NG,2005,delivered gas,7510.824697,India
+India,trn_freight_road,Truck,NG,2010,delivered gas,7449.677285,India
+India,trn_freight_road,Truck,NG,2015,delivered gas,7388.529872,India
+India,trn_freight_road,Truck,NG,2020,delivered gas,7327.382459,India
+India,trn_freight_road,Truck,NG,2025,delivered gas,7267.917351,India
+India,trn_freight_road,Truck,NG,2030,delivered gas,7208.452242,India
+India,trn_freight_road,Truck,NG,2035,delivered gas,7148.987133,India
+India,trn_freight_road,Truck,NG,2040,delivered gas,7091.133246,India
+India,trn_freight_road,Truck,NG,2045,delivered gas,7033.279358,India
+India,trn_freight_road,Truck,NG,2050,delivered gas,6975.42547,India
+India,trn_freight_road,Truck,NG,2055,delivered gas,6919.159109,India
+India,trn_freight_road,Truck,NG,2060,delivered gas,6862.892748,India
+India,trn_freight_road,Truck,NG,2065,delivered gas,6806.626386,India
+India,trn_freight_road,Truck,NG,2070,delivered gas,6751.860672,India
+India,trn_freight_road,Truck,NG,2075,delivered gas,6697.094958,India
+India,trn_freight_road,Truck,NG,2080,delivered gas,6642.329244,India
+India,trn_freight_road,Truck,NG,2085,delivered gas,6589.064176,India
+India,trn_freight_road,Truck,NG,2090,delivered gas,6535.799109,India
+India,trn_freight_road,Truck,NG,2095,delivered gas,6482.534041,India
+India,trn_freight_road,Truck,NG,2100,delivered gas,6482.534041,India
 India,trn_freight_road,Truck,Electric,1975,elect_td_trn,7510.824697,India
 India,trn_freight_road,Truck,Electric,1990,elect_td_trn,7510.824697,India
 India,trn_freight_road,Truck,Electric,2005,elect_td_trn,7510.824697,India

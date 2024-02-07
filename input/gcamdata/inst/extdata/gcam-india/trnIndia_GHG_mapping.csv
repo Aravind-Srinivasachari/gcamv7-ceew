@@ -29,3 +29,4 @@ International Ship,refined liquids,Freight,trn_shipping_intl,oil
 Truck,refined liquids,Freight,trn_freight_road_truck,oil
 Truck,electricity,Freight,trn_freight_road_truck,electricity
 Truck,hydrogen,Freight,trn_freight_road_truck,hydrogen
+Truck,gas,Freight,trn_freight_road_truck,gas
