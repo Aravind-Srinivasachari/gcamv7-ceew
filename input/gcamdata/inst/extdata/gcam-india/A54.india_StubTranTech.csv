@@ -23,6 +23,7 @@ India,trn_pass_road,Bus,NG
 India,trn_pass_road,Bus,FCEV
 India,trn_pass_road_LDV_2W,2W,BEV
 India,trn_pass_road_LDV_2W,2W,Liquids
+India,trn_pass_road_LDV,3W,BEV
 India,trn_pass_road_LDV,3W,NG
 India,trn_pass_road_LDV,3W,Liquids
 India,trn_pass_road_LDV_4W,LDV_4W,BEV

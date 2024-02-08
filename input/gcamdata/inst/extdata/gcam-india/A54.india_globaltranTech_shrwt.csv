@@ -25,6 +25,7 @@ trn_pass_road_LDV_2W,2W,BEV,1,1,1,1,1,1
 trn_pass_road_LDV_2W,2W,Liquids,1,1,1,1,1,1
 trn_pass_road_LDV,3W,NG,0,0,0,1,1,1
 trn_pass_road_LDV,3W,Liquids,1,1,1,1,1,1
+trn_pass_road_LDV,3W,BEV,0,0,0,1,1,1
 trn_pass_road_LDV_4W,LDV_4W,BEV,0,0,0,1,1,1
 trn_pass_road_LDV_4W,LDV_4W,FCEV,0,0,0,1,1,1
 trn_pass_road_LDV_4W,LDV_4W,NG,0,0,0,1,1,1
