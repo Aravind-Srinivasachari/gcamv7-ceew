@@ -10,7 +10,7 @@ trn_freight,Freight Rail,Electric,1,1,1,1,1,1
 trn_freight,Freight Rail,Liquids,1,1,1,1,1,1
 trn_freight,Domestic Ship ,Liquids,1,1,1,1,1,1
 trn_freight_road,Truck,Liquids,1,1,1,1,1,1
-trn_freight_road,Truck,Electric,0,0,0,1,1,1
+trn_freight_road,Truck,BEV,0,0,0,1,1,1
 trn_freight_road,Truck,FCEV,0,0,0,1,1,1
 trn_freight_road,Truck,NG,0,0,1,1,1,1
 trn_pass,HSR,Electric,0,0,0,1,1,1

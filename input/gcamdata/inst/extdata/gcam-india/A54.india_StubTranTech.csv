@@ -10,7 +10,7 @@ India,trn_freight,Freight Rail,Electric
 India,trn_freight,Freight Rail,Liquids
 India,trn_freight,Domestic Ship,Liquids
 India,trn_freight_road,Truck,Liquids
-India,trn_freight_road,Truck,Electric
+India,trn_freight_road,Truck,BEV
 India,trn_freight_road,Truck,FCEV
 India,trn_freight_road,Truck,NG
 India,trn_pass,HSR,Electric
