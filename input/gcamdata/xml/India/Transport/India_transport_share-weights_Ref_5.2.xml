@@ -3,7 +3,7 @@
     <world>
         <region name="India">
             <supplysector name="trn_pass_road_LDV">
-                <tranSubsector name="LDV_3W">
+                <tranSubsector name="3W">
                     <tranTechnology name="BEV">
                         <interpolation-rule apply-to="share-weight"
                             from-year="2010" to-year="2015">
@@ -71,7 +71,7 @@
                 </tranSubsector>
             </supplysector>
             <supplysector name="trn_pass_road_LDV_2W">
-                <tranSubsector name="LDV_2W">
+                <tranSubsector name="2W">
                     <tranTechnology name="BEV">
                         <interpolation-rule apply-to="share-weight"
                             from-year="2010" to-year="2015">
@@ -102,7 +102,7 @@
             </supplysector>
             <supplysector name="trn_pass_road_LDV_4W">
                 <tranSubsector name="LDV_4W">
-                    <tranTechnology name="Electric">
+                    <tranTechnology name="BEV">
                         <interpolation-rule apply-to="share-weight"
                             from-year="2010" to-year="2015">
                             <from-value>0</from-value>
@@ -259,7 +259,7 @@
                             <interpolation-function name="linear"/>
                         </interpolation-rule>
                     </tranTechnology>
-                    <tranTechnology name="Electric">
+                    <tranTechnology name="BEV">
                         <interpolation-rule apply-to="share-weight"
                             from-year="2010" to-year="2020">
                             <from-value>0</from-value>
