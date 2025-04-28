@@ -21,3 +21,10 @@ exe/debugReference.xml
 exe/debugReference.xml
 *.bak
 
+/input/gcamdata/inst/extdata/emissions
+/input/gcamdata/inst/extdata/energy/mappings
+/input/gcamdata/inst/extdata/energy/~BROMIUM
+/input/gcamdata/inst/extdata/energy/GIS/~BROMIUM
+/exe/~BROMIUM
+/input/gcamdata/inst/extdata/socioeconomics/GTAP/~BROMIUM
+/input/gcamdata/inst/extdata/socioeconomics/~BROMIUM
