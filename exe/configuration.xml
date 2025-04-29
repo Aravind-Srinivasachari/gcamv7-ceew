@@ -149,12 +149,10 @@
 		
 		<!-- Transport -->
 		<Value name = "Transport India restructuring">../input/gcamdata/xml/transportation_India_new.xml</Value>
-		<!-- <Value name = "Transport shrwt">../input/gcamdata/xml/India/Transport/India_transport_share-weights_Ref.xml</Value>	 -->
-		<!-- <Value name = "Transport income elasticity">../input/gcamdata/xml/India/Transport/India_transport_incm_elas_BAU.xml</Value>	 -->
-
+		<Value name = "Transport shrwt">../input/gcamdata/xml/India/Transport/India_transport_share-weights_Ref_5.2.xml</Value>
+		<Value name = "Transport income elasticity">../input/gcamdata/xml/India/Transport/India_transport_incm_elas_BAU.xml</Value>	
 		<!-- Building -->
-		<Value name = "Building India restructuring">../input/gcamdata/xml/building_india.xml</Value>	
-		<!-- <Value name = "Building shrwt">../input/gcamdata/xml/India/Building/India_building_share-weights_Ref6.xml</Value> -->
+		<Value name = "Building India restructuring">../input/gcamdata/xml/building_india.xml</Value>
 		<!-- <Value name = "Building heating cooling days">../input/gcamdata/xml/India/Building/CDD_HDD_BAU.xml</Value> -->
 		<!-- <Value name = "Building fuel adder">../input/gcamdata/xml/India/Building/IndiaBuildingFuelAdder.xml</Value> -->
 		
@@ -188,7 +186,7 @@
 		<Value name="climateOutputInterval">5</Value>
 		<Value name="parallel-grain-size">50</Value>
 		<Value name="stop-period">-1</Value>
-		<Value name="stop-year">2035</Value>
+		<Value name="stop-year">2020</Value>
 		<Value name="restart-period">-1</Value>
 		<Value name="restart-year">-1</Value>
 		<Value name="max-parallelism">-1</Value>

@@ -201,7 +201,7 @@ module_india_L254.transportation <- function(command, ...) {
     L254.Supplysector_trn_India <- L254.Supplysector_trn_India %>%
       bind_rows(A54.additionsupplypass_trn)
 
-    L254.FinalEnergyKeyword_trn <- L254.FinalEnergyKeyword_trn %>%
+    L254.FinalEnergyKeyword_trn_India <- L254.FinalEnergyKeyword_trn_India %>%
       bind_rows(A54.finalenergykeyword_trn)
 
     # Calibration

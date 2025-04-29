@@ -15,6 +15,7 @@ HSR,electricity,Passenger,trn_pass_hsr,electricity
 2W,refined liquids,Passenger,trn_pass_road_LDV_2W,oil
 3W,refined liquids,Passenger,trn_pass_road_LDV,oil
 3W,gas,Passenger,trn_pass_road_LDV,gas
+3W,electricity,Passenger,trn_pass_road_LDV,electricity
 LDV_4W,electricity,Passenger,trn_pass_road_LDV_4W,electricity
 LDV_4W,gas,Passenger,trn_pass_road_LDV_4W,gas
 LDV_4W,hydrogen,Passenger,trn_pass_road_LDV_4W,hydrogen
@@ -29,3 +30,4 @@ International Ship,refined liquids,Freight,trn_shipping_intl,oil
 Truck,refined liquids,Freight,trn_freight_road_truck,oil
 Truck,electricity,Freight,trn_freight_road_truck,electricity
 Truck,hydrogen,Freight,trn_freight_road_truck,hydrogen
+Truck,gas,Freight,trn_freight_road_truck,gas

@@ -10,8 +10,9 @@ trn_freight,Freight Rail,Electric,1,1,1,1,1,1
 trn_freight,Freight Rail,Liquids,1,1,1,1,1,1
 trn_freight,Domestic Ship ,Liquids,1,1,1,1,1,1
 trn_freight_road,Truck,Liquids,1,1,1,1,1,1
-trn_freight_road,Truck,Electric,0,0,0,1,1,1
+trn_freight_road,Truck,BEV,0,0,0,1,1,1
 trn_freight_road,Truck,FCEV,0,0,0,1,1,1
+trn_freight_road,Truck,NG,0,0,1,1,1,1
 trn_pass,HSR,Electric,0,0,0,1,1,1
 trn_pass,Passenger Rail,Electric,1,1,1,1,1,1
 trn_pass,Domestic Aviation,Liquids,1,1,1,1,1,1
@@ -24,6 +25,7 @@ trn_pass_road_LDV_2W,2W,BEV,1,1,1,1,1,1
 trn_pass_road_LDV_2W,2W,Liquids,1,1,1,1,1,1
 trn_pass_road_LDV,3W,NG,0,0,0,1,1,1
 trn_pass_road_LDV,3W,Liquids,1,1,1,1,1,1
+trn_pass_road_LDV,3W,BEV,0,0,0,1,1,1
 trn_pass_road_LDV_4W,LDV_4W,BEV,0,0,0,1,1,1
 trn_pass_road_LDV_4W,LDV_4W,FCEV,0,0,0,1,1,1
 trn_pass_road_LDV_4W,LDV_4W,NG,0,0,0,1,1,1

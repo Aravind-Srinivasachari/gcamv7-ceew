@@ -10,8 +10,9 @@ trn_freight,Freight Rail,Electric,share-weight,final-calibration-year,end-year,f
 trn_freight,Freight Rail,Liquids,share-weight,final-calibration-year,end-year,fixed
 trn_freight,Domestic Ship,Liquids,share-weight,final-calibration-year,end-year,fixed
 trn_freight_road,Truck,Liquids,share-weight,final-calibration-year,end-year,fixed
-trn_freight_road,Truck,Electric,share-weight,final-calibration-year,2050,linear
+trn_freight_road,Truck,BEV,share-weight,final-calibration-year,2050,linear
 trn_freight_road,Truck,FCEV,share-weight,2015,end-year,linear
+trn_freight_road,Truck,NG,share-weight,final-calibration-year,2050,linear
 trn_pass,HSR,Electric,share-weight,final-calibration-year,2050,linear
 trn_pass,Passenger Rail,Electric,share-weight,final-calibration-year,end-year,fixed
 trn_pass,Domestic Aviation,Liquids,share-weight,final-calibration-year,end-year,fixed
@@ -24,6 +25,7 @@ trn_pass_road_LDV_2W,2W,BEV,share-weight,final-calibration-year,2050,linear
 trn_pass_road_LDV_2W,2W,Liquids,share-weight,final-calibration-year,end-year,fixed
 trn_pass_road_LDV,3W,NG,share-weight,final-calibration-year,2050,linear
 trn_pass_road_LDV,3W,Liquids,share-weight,final-calibration-year,end-year,fixed
+trn_pass_road_LDV,3W,BEV,share-weight,final-calibration-year,2050,linear
 trn_pass_road_LDV_4W,LDV_4W,BEV,share-weight,final-calibration-year,2050,linear
 trn_pass_road_LDV_4W,LDV_4W,FCEV,share-weight,2015,end-year,linear
 trn_pass_road_LDV_4W,LDV_4W,NG,share-weight,final-calibration-year,2050,linear

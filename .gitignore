@@ -7,16 +7,15 @@
 /CONTRIBUTING.md
 /LICENSE.md
 /README.md
-/exe/*.dll
 .Rproj.user
 /input/gcamdata/inst/extdata/gcam-usa
 /input/gcamdata/man
 /input/gcamdata/.drake
 /input/gcamdata/figures
 /input/gcamdata/tests
-/input/gcamdata/inst/extdata/aglu
 
 
+*~BROMIUM  
 exe/debugReference.xml
 exe/debugReference.xml
 *.bak
