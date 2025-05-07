@@ -27,3 +27,5 @@ exe/debugReference.xml
 /exe/~BROMIUM
 /input/gcamdata/inst/extdata/socioeconomics/GTAP/~BROMIUM
 /input/gcamdata/inst/extdata/socioeconomics/~BROMIUM
+input/gcamdata/inst/extdata/aglu/USDA/USDA_Cost_database.xls
+Packages Installation.R
