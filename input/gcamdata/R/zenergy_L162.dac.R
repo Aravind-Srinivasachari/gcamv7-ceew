@@ -37,15 +37,14 @@ module_energy_L162.dac <- function(command, ...) {
     # Set constants used for this chunk
     # ---------------------------------
 
-    L161.RsrcCurves_MtC_R %>%
+      L162.out_Mt_R_dac_Yh <- L161.RsrcCurves_MtC_R %>%
       group_by(GCAM_region_ID) %>%
       summarise(Cstorage = sum(available)) %>%
       ungroup() %>%
       mutate(sector = "CO2 removal",
              year = max(MODEL_BASE_YEARS),
              value = Cstorage / Cstorage[GCAM_region_ID == gcam.USA_CODE] * energy.DAC_LIMIT_USA_MTC) %>%
-      select(GCAM_region_ID, sector, year, value) ->
-      L162.out_Mt_R_dac_Yh
+      select(GCAM_region_ID, sector, year, value)
 
     L162.out_Mt_R_dac_Yh %>%
       add_title("Calibration of DAC in each region") %>%

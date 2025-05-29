@@ -105,6 +105,9 @@
         <Value name = "prune_ag">../input/gcamdata/xml/prune_empty_ag.xml</Value>
 
 		<Value name = "solver">../input/solution/cal_broyden_config.xml</Value>
+
+		<!-- WEATHERING CDR -->
+		<Value name = "ERW">../input/gcamdata/xml/Weathering.xml</Value>
 		
 		<!-- India specific parameters (Don't change!!) -->
 		<!-- Socioeconomics -->
