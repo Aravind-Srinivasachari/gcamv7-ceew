@@ -1,6 +1,6 @@
 # Copyright 2019 Battelle Memorial Institute; see the LICENSE file.
 
-#' module_energy_LA163.Weathering
+#' module_energy_LA161.Cstorage
 #'
 #' Build carbon storage supply curves by region.
 #'
@@ -14,7 +14,7 @@
 #' @importFrom assertthat assert_that
 #' @importFrom dplyr filter group_by mutate select summarise
 #' @importFrom tidyr gather
-#' @author AS May 2025
+#' @author JF Sept 2021
 module_energy_LA163.Weathering <- function(command, ...) {
   if(command == driver.DECLARE_INPUTS) {
     return(c(#FILE = "common/iso_GCAM_regID",
@@ -41,10 +41,10 @@ module_energy_LA163.Weathering <- function(command, ...) {
     A63.rsrc_curves <- get_data(all_data, "energy/A63.rsrc_curves")
 
 
-    L163.RsrcCurves_Mt <- A63.rsrc_curves %>%
-    left_join_error_no_match(GCAM_region_names, by = "region") %>%
-    select(-region) %>%
-    rename(extractioncost = cost)
+    A63.rsrc_curves %>%
+      left_join_error_no_match(GCAM_region_names, by = "region") %>%
+      select(-region) %>%
+      rename(extractioncost = cost) -> L163.RsrcCurves_Mt
 
 
 

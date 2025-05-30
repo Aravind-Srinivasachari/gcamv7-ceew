@@ -1,6 +1,6 @@
 # Copyright 2019 Battelle Memorial Institute; see the LICENSE file.
 
-#' module_energy_L263.Weathering
+#' module_energy_L263.Cstorage
 #'
 #' Calculate carbon storage resource supply curves, shareweights, technology coefficients and costs, and other carbon storage information.
 #'
@@ -31,7 +31,7 @@
 #' @importFrom assertthat assert_that
 #' @importFrom dplyr bind_rows distinct filter mutate select
 #' @importFrom tidyr complete nesting
-#' @author AS May 2025
+#' @author AJS August 2017
 module_energy_L263.Weathering <- function(command, ...) {
   if(command == driver.DECLARE_INPUTS) {
     return(c(FILE = "common/GCAM_region_names",
@@ -46,8 +46,6 @@ module_energy_L263.Weathering <- function(command, ...) {
              FILE = "energy/A63.subsector_interp",
              FILE = "energy/A63.globaltech_retirement",
              FILE = "energy/A63.PrimaryFuelCCoef",
-             FILE = "energy/calibrated_techs_cdr_RW",
-             FILE = "energy/A63.demand",
              "L163.RsrcCurves_Mt"))
   } else if(command == driver.DECLARE_OUTPUTS) {
     return(c("L263.Rsrc",
@@ -65,53 +63,50 @@ module_energy_L263.Weathering <- function(command, ...) {
              "L263.RsrcCurves_C_lowest",
              "L263.RsrcPrice",
              "L263.WeatheringRsrcMax",
-             "L263.CarbonCoef_RW",
-             "L263.StubTechProd_RW",
-             "L263.PerCapitaBased_RW",
-             "L263.BaseService_RW",
-             "L263.PriceElasticity_RW",
-             "L263.FinalEnergyKeyword_RW",
              "L263.GlobalTechCSeq",
              "L263.SubsectorInterp",
              "L263.GlobalTechInputPMult",
              "L263.GlobalTechSCurve",
-             "L263.GlobalTechProfitShutdown"))
+             "L263.GlobalTechProfitShutdown",
+             "L263.CarbonCoef_RW",
+             "L263.FinalEnergyKeyword_RW"))
   } else if(command == driver.MAKE) {
 
     all_data <- list(...)[[1]]
 
     # Load required inputs
     GCAM_region_names <- get_data(all_data, "common/GCAM_region_names")
-    A63.PrimaryFuelCCoef <- get_data(all_data, "energy/A63.PrimaryFuelCCoef", strip_attributes = TRUE)
     A63.rsrc_info <- get_data(all_data, "energy/A63.rsrc_info", strip_attributes = TRUE)
-    A63.demand <- get_data(all_data, "energy/A63.demand", strip_attributes = TRUE)
     A63.sector <- get_data(all_data, "energy/A63.sector", strip_attributes = TRUE)
     A63.subsector_logit <- get_data(all_data, "energy/A63.subsector_logit", strip_attributes = TRUE)
     A63.subsector_shrwt <- get_data(all_data, "energy/A63.subsector_shrwt", strip_attributes = TRUE)
-    A63.subsector_interp <- get_data(all_data, "energy/A63.subsector_interp", strip_attributes = TRUE)
     A63.globaltech_coef <- get_data(all_data, "energy/A63.globaltech_coef",strip_attributes = TRUE)
     A63.globaltech_cost <- get_data(all_data, "energy/A63.globaltech_cost",strip_attributes = TRUE)
     A63.globaltech_shrwt <- get_data(all_data, "energy/A63.globaltech_shrwt", strip_attributes = TRUE)
     A63.nonenergy_Cseq <- get_data(all_data, "energy/A63.nonenergy_Cseq", strip_attributes = TRUE)
+    A63.subsector_interp <- get_data(all_data, "energy/A63.subsector_interp", strip_attributes = TRUE)
     A63.globaltech_retirement <- get_data(all_data, "energy/A63.globaltech_retirement", strip_attributes = TRUE)
     L163.RsrcCurves_Mt <- get_data(all_data, "L163.RsrcCurves_Mt", strip_attributes = TRUE)
-    calibrated_techs <- get_data(all_data, "energy/calibrated_techs_cdr_RW")
+    A63.PrimaryFuelCCoef <- get_data(all_data, "energy/A63.PrimaryFuelCCoef", strip_attributes = TRUE)
 
     # ===================================================
 
     # Silence package notes
-    . <- available <- PrimaryFuelCO2Coef.name <- capacity.factor <- curr_table <- extractioncost <-
+    . <- available <- capacity.factor <- curr_table <- extractioncost <-
       grade <- logit.type <- minicam.energy.input <- minicam.non.energy.input <-
       `output-unit` <- `price-unit` <- resource <- resource_type <- share.weight <-
       subresource <- subsector <- subsector.name <- supplysector <- technology <-
       value <- year <- region <- resource <- output.unit <- price.unit <-
       market <- logit.exponent <- coefficient <- input.cost <- NULL
 
+    # Prelim - carbon coefficient (emissions factor)
+    A63.PrimaryFuelCCoef %>%
+      write_to_all_regions(c(LEVEL2_DATA_NAMES[["CarbonCoef"]]), GCAM_region_names = GCAM_region_names, has_traded = TRUE) -> L263.CarbonCoef_RW
+
     # A
     # Create tables for carbon storage resource information
     # A63.rsrc_info provides carbon storage resource info (output unit, price unit, capacity factor, market, etc)
-
-      L263.rsrc_info <- A63.rsrc_info %>%
+    A63.rsrc_info %>%
       gather_years() %>%
       # Expand table to incorporate GCAM region names (use ID to ensure correct region ordering)
       # We will use these specific region names to replace the broad term, regional, in the market column.
@@ -119,7 +114,8 @@ module_energy_L263.Weathering <- function(command, ...) {
       # Reset regional markets to the names of the specific regions
       mutate(market = replace(market, market == "regional", region[market == "regional"]),
              capacity.factor = as.numeric(capacity.factor)) %>%
-      rename(output.unit = `output-unit`, price.unit = `price-unit`)
+      rename(output.unit = `output-unit`, price.unit = `price-unit`) ->
+      L263.rsrc_info
 
     # Split different types of resources into separate tables
 
@@ -134,59 +130,12 @@ module_energy_L263.Weathering <- function(command, ...) {
       filter(year %in% MODEL_BASE_YEARS) %>%
       select(region, renewresource=resource, year, price = value) ->
       L263.RsrcPrice
-
-    #Calibration and region-specific data
-    # L262.StubTechProd_dac: calibrated CO2 removal (cdr) production (arbitrarily high value met entirely by no-RW technology in history)
-    calibrated_techs %>%
-      filter(calibration == "output") %>% # Only take the tech IDs where the calibration is identified as output
-      select(sector, supplysector, subsector, technology) %>%
-      distinct ->
-      calibrated_techs_export # temporary tibble
-
-    L163.out_Mt_R_RW_Yh <- L163.RsrcCurves_Mt %>%
-      group_by(GCAM_region_ID) %>%
-      summarise(Cstorage = sum(available)) %>%
-      ungroup() %>%
-      mutate(sector = "CO2 removal",
-             year = max(MODEL_BASE_YEARS),
-             value = Cstorage) %>%
-      select(GCAM_region_ID, sector, year, value)
-
-      L263.StubTechProd_RW <- L163.out_Mt_R_RW_Yh %>%
-      filter(year %in% MODEL_BASE_YEARS) %>%
-      mutate(calOutputValue = round(value, energy.DIGITS_CALOUTPUT)) %>%
-      left_join_error_no_match(GCAM_region_names, by = "GCAM_region_ID") %>%
-      left_join_error_no_match(calibrated_techs_export, by = "sector") %>%
-      mutate(stub.technology = technology,
-             share.weight.year = year,
-             subs.share.weight = if_else(calOutputValue > 0, 1, 0),
-             tech.share.weight = subs.share.weight) %>%
-      select(LEVEL2_DATA_NAMES[["StubTechProd"]])
-
-      # L262.PerCapitaBased_dac: per-capita based flag for dac exports final demand.  Note that this should be zero as the amount of DAC shouldn't be explicitly tied to population
-      A63.demand %>%
-        write_to_all_regions(LEVEL2_DATA_NAMES[["PerCapitaBased"]], GCAM_region_names) ->
-        L263.PerCapitaBased_RW
-
-
-      #     L262.BaseService_dac: base-year service output of dac (arbitrarily high)
-      L263.StubTechProd_RW %>%
-        select(region, year, base.service = calOutputValue) %>%
-        mutate(energy.final.demand = A63.demand[["energy.final.demand"]]) ->
-        L263.BaseService_RW
-
-      # L263.PriceElasticity_RW: price elasticity (zero to represent the backstop nature of RW technology)
-      A63.demand %>%
-        write_to_all_regions(LEVEL2_DATA_NAMES[["PriceElasticity"]][LEVEL2_DATA_NAMES[["PriceElasticity"]] != "year"], GCAM_region_names) %>%
-        repeat_add_columns(tibble(year = MODEL_FUTURE_YEARS)) %>%
-        select(LEVEL2_DATA_NAMES[["PriceElasticity"]]) ->
-        L263.PriceElasticity_RW
-
     # Retirement information
-      A63.globaltech_retirement_with_years <- A63.globaltech_retirement %>%
+    A63.globaltech_retirement %>%
       set_years %>%
       mutate(year = as.integer(year)) %>%
-      rename(sector.name = supplysector, subsector.name = subsector)
+      rename(sector.name = supplysector, subsector.name = subsector) ->
+      A63.globaltech_retirement_with_years
 
     # Copy the data in the last base year period through to the end year
     A63.globaltech_retirement_with_years %>%
@@ -223,20 +172,21 @@ module_energy_L263.Weathering <- function(command, ...) {
     DIGITS_COST <- 1
 
     # L163.RsrcCurves_Mt reports carbon storage resource supply curves by GCAM region.
-      L263.RsrcCurves_C <- L163.RsrcCurves_Mt %>%
+    L163.RsrcCurves_Mt %>%
       # Match in GCAM region names using region ID
       left_join_error_no_match(GCAM_region_names, by = "GCAM_region_ID") %>%
       #mutate(available = round(available, DIGITS_COST)) %>%
-      select(region, renewresource = resource, sub.renewable.resource = subresource, grade, available, extractioncost)
-      # This is a final output table.
+      select(region, renewresource = resource, sub.renewable.resource = subresource, grade, available, extractioncost) ->
+      L263.RsrcCurves_C # This is a final output table.
 
-      L263.ResTechShrwt_C <- L263.RsrcCurves_C %>%
+    L263.RsrcCurves_C %>%
       select(region, resource = renewresource , subresource = sub.renewable.resource) %>%
       distinct() %>%
       repeat_add_columns(tibble(year = MODEL_YEARS)) %>%
       mutate(technology = subresource,
              share.weight = 1.0) %>%
-      select(LEVEL2_DATA_NAMES[["ResTechShrwt"]])
+      select(LEVEL2_DATA_NAMES[["ResTechShrwt"]]) ->
+      L263.ResTechShrwt_C
 
 
     L263.WeatheringRsrcMax <- L263.RsrcCurves_C %>%
@@ -267,22 +217,19 @@ module_energy_L263.Weathering <- function(command, ...) {
 
 
     # C
-    # Carbon storage sector information
+    # Carbon removal sector information
     A63.sector %>%
       mutate(logit.exponent = as.numeric(logit.exponent)) %>%
       write_to_all_regions(c(LEVEL2_DATA_NAMES[["Supplysector"]], LOGIT_TYPE_COLNAME),
                            GCAM_region_names = GCAM_region_names) ->
       L263.Supplysector_C # This is a final output table.
 
-    # Prelim - carbon coefficient (emissions factor)
-    A63.PrimaryFuelCCoef %>%
-      write_to_all_regions(c(LEVEL2_DATA_NAMES[["CarbonCoef"]]), GCAM_region_names = GCAM_region_names, has_traded = TRUE) -> L263.CarbonCoef_RW
-
-    #L263.FinalEnergyKeyword_EW: Supply sector keywords for CO2 removal sector
+    # L263.FinalEnergyKeyword_RW: Supply sector keywords for CO2 removal sector
     A63.sector %>%
       write_to_all_regions(LEVEL2_DATA_NAMES[["FinalEnergyKeyword"]], GCAM_region_names) %>%
       na.omit ->
       L263.FinalEnergyKeyword_RW
+
 
     # D
     # Subsector information
@@ -318,6 +265,25 @@ module_energy_L263.Weathering <- function(command, ...) {
                            GCAM_region_names = GCAM_region_names) %>%
       select(region, supplysector, subsector, stub.technology = technology) ->
       L263.StubTech_C # This is a final output table.
+
+    # Shareweights of global technologies for energy transformation
+    A63.globaltech_shrwt %>%
+      gather_years %>%
+      # Expand table to include all model base and future years
+      complete(year = c(year, MODEL_YEARS), nesting(supplysector, subsector, technology)) %>%
+      # Extrapolate to fill out values for all years
+      # Rule 2 is used so years outside of min-max range are assigned values from closest data, as opposed to NAs
+      mutate(share.weight = approx_fun(year, value, rule = 2)) %>%
+      filter(year %in% MODEL_YEARS) %>% # This will drop 1971
+      # Assign the columns "sector.name" and "subsector.name", consistent with the location info of a global technology
+      select(sector.name = supplysector, subsector.name = subsector, technology, year, share.weight) ->
+      L263.GlobalTechShrwt_C # This is a final output table.
+
+    # Use zero shareweights for offshore storage
+    L263.GlobalTechShrwt_C %>%
+      filter(subsector.name == "offshore carbon-storage") %>%
+      mutate(share.weight = 0) ->
+      L263.GlobalTechShrwt_C_nooffshore # This is a final output table.
 
     # Energy inputs and coefficients of global technologies for carbon storage
     # A63.globaltech_coef reports carbon storage global technology coefficients
@@ -360,25 +326,6 @@ module_energy_L263.Weathering <- function(command, ...) {
       ungroup() %>%
       select(sector.name = supplysector, subsector.name = subsector, technology, year, minicam.non.energy.input, input.cost) ->
       L263.GlobalTechCost_C # This is a final output table.
-
-    # Shareweights of global technologies for energy transformation
-    A63.globaltech_shrwt %>%
-      gather_years %>%
-      # Expand table to include all model base and future years
-      complete(year = c(year, MODEL_YEARS), nesting(supplysector, subsector, technology)) %>%
-      # Extrapolate to fill out values for all years
-      # Rule 2 is used so years outside of min-max range are assigned values from closest data, as opposed to NAs
-      mutate(share.weight = approx_fun(year, value, rule = 2)) %>%
-      filter(year %in% MODEL_YEARS) %>% # This will drop 1971
-      # Assign the columns "sector.name" and "subsector.name", consistent with the location info of a global technology
-      select(sector.name = supplysector, subsector.name = subsector, technology, year, share.weight) ->
-      L263.GlobalTechShrwt_C # This is a final output table.
-
-    # Use zero shareweights for offshore storage
-    L263.GlobalTechShrwt_C %>%
-      filter(subsector.name == "offshore carbon-storage") %>%
-      mutate(share.weight = 0) ->
-      L263.GlobalTechShrwt_C_nooffshore # This is a final output table.
 
     A63.nonenergy_Cseq %>%
       repeat_add_columns(tibble(year = c(MODEL_BASE_YEARS, MODEL_FUTURE_YEARS))) %>%
@@ -510,21 +457,6 @@ module_energy_L263.Weathering <- function(command, ...) {
       same_precursors_as(L263.RsrcCurves_C) ->
       L263.WeatheringRsrcMax
 
-    L263.CarbonCoef_RW %>%
-      add_title("Assumed carbon coefficient of air-derived CO2") %>%
-      add_units("Unitless C/C ratio") %>%
-      add_comments("Set in exogenous data table A63.PrimaryFuelCCoef") %>%
-      add_precursors("energy/A63.PrimaryFuelCCoef", "common/GCAM_region_names") ->
-      L263.CarbonCoef_RW
-
-    L263.FinalEnergyKeyword_RW %>%
-      add_title("Supply sector keywords for RW sector") %>%
-      add_units("NA") %>%
-      add_comments("For RW sector, the supply sector final energy keywords from A63.sector are expended into all GCAM regions") %>%
-      add_legacy_name("L263.FinalEnergyKeyword_RW") %>%
-      add_precursors("energy/A63.sector", "common/GCAM_region_names") ->
-      L263.FinalEnergyKeyword_RW
-
     L263.GlobalTechCSeq %>%
       add_title("CO2 capture fractions for rock weathering") %>%
       add_units("Unitless") %>%
@@ -561,46 +493,26 @@ module_energy_L263.Weathering <- function(command, ...) {
       add_precursors("energy/A63.globaltech_retirement") ->
       L263.GlobalTechProfitShutdown
 
-    L263.PerCapitaBased_RW %>%
-      add_title("per-capita based flag for dac exports final demand") %>%
+    L263.FinalEnergyKeyword_RW %>%
+      add_title("Supply sector keywords for RW sector") %>%
       add_units("NA") %>%
-      add_comments("Per-capita based flags for dac from A63.demand are expanded into all GCAM regions") %>%
-      add_legacy_name("L263.PerCapitaBased_RW") %>%
-      add_precursors("energy/A63.demand", "common/GCAM_region_names") ->
-      L263.PerCapitaBased_RW
+      add_comments("For RW sector, the supply sector final energy keywords from A63.sector are expended into all GCAM regions") %>%
+      add_legacy_name("L263.FinalEnergyKeyword_RW") %>%
+      add_precursors("energy/A63.sector", "common/GCAM_region_names") ->
+      L263.FinalEnergyKeyword_RW
 
-
-    L263.PriceElasticity_RW %>%
-      add_title("price elasticity for dac") %>%
-      add_units("Unitless") %>%
-      add_comments("The elasticity values from A63.demand are expanded into all GCAM_regions") %>%
-      add_legacy_name("L263.PriceElasticity_RW") %>%
-      add_precursors("energy/A63.demand", "common/GCAM_region_names") ->
-      L263.PriceElasticity_RW
-
-    L263.StubTechProd_RW %>%
-      add_title("calibrated cdr values") %>%
-      add_units("Mt") %>%
-      add_comments("Values are calculated using L162.out_Mt_R_dac_Yh then added GCAM region information and supplysector, subsector, and technology information") %>%
-      add_legacy_name("L263.StubTechProd_RW") %>%
-      add_precursors("energy/calibrated_techs_cdr_RW", "L163.RsrcCurves_Mt", "common/GCAM_region_names") ->
-      L263.StubTechProd_RW
-
-    L263.BaseService_RW %>%
-      add_title("base-year service output of dac") %>%
-      add_units("Mt") %>%
-      add_comments("Transformed from L263.StubTechProd_dac by adding energy.final.demand from A62.demand") %>%
-      add_legacy_name("L263.BaseService_RW") %>%
-      add_precursors("energy/A63.demand", "energy/calibrated_techs_cdr_RW", "L163.RsrcCurves_Mt", "common/GCAM_region_names") ->
-      L263.BaseService_RW
-
+    L263.CarbonCoef_RW %>%
+      add_title("Assumed carbon coefficient of sequestered CO2") %>%
+      add_units("Unitless C/C ratio") %>%
+      add_comments("Set in exogenous data table A63.PrimaryFuelCCoef") %>%
+      add_precursors("energy/A63.PrimaryFuelCCoef", "common/GCAM_region_names") ->
+      L263.CarbonCoef_RW
 
 
     return_data(L263.Rsrc, L263.RsrcCurves_C, L263.ResTechShrwt_C, L263.Supplysector_C, L263.SubsectorLogit_C, L263.SubsectorShrwtFllt_C, L263.StubTech_C, L263.GlobalTechCoef_C, L263.GlobalTechCost_C, L263.GlobalTechShrwt_C, L263.RsrcCurves_C_high, L263.RsrcCurves_C_low, L263.RsrcCurves_C_lowest,L263.RsrcPrice,L263.WeatheringRsrcMax,L263.GlobalTechCSeq,L263.SubsectorInterp,
                 L263.GlobalTechInputPMult,
                 L263.GlobalTechSCurve,L263.GlobalTechProfitShutdown,
-                L263.FinalEnergyKeyword_RW, L263.CarbonCoef_RW, L263.PerCapitaBased_RW, L263.PriceElasticity_RW,
-                L263.StubTechProd_RW, L263.BaseService_RW)
+                L263.FinalEnergyKeyword_RW, L263.CarbonCoef_RW)
   } else {
     stop("Unknown command")
   }

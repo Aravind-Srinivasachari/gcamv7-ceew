@@ -5,3 +5,4 @@
 # ----------
 sector,fuel,supplysector,subsector,technology,minicam.energy.input,calibration,secondary.output
 CO2 removal,airCO2,CO2 removal,rock weathering,no RW,airCO2,output,
+CO2 removal,electricity,CO2 removal,rock weathering,no RW,elec_td_ind,output,
