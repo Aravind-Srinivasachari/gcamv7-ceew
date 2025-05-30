@@ -1,8 +1,10 @@
 # File: A63.globaltech_shrwt.csv
 # Title: Carbon storage technology shareweight
 # Units: Unitless
-# Column types: cccii
+# Column types: ccciiii
 # ----------
-supplysector,subsector,technology,1971,2100
-surface carbon-storage,inorganic-surface-storage,inorganic-surface-storage,1,1
-CO2 removal,rock weathering,rock weathering,1,1
+supplysector,subsector,technology,1971,2020,2050,2100
+surface carbon-storage,inorganic-surface-storage,inorganic-surface-storage,1,1,1,1
+CO2 removal,rock weathering,rock weathering,0,0,1,1
+airCO2,airCO2,airCO2,1,1,1,1
+CO2 removal,rock weathering,no RW,1,1,1,1

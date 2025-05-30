@@ -25,11 +25,17 @@ module_energy_batch_Weathering_xml <- function(command, ...) {
               "L263.GlobalTechShrwt_C",
               "L263.RsrcPrice",
               "L263.WeatheringRsrcMax",
+              "L263.CarbonCoef_RW",
+              "L263.FinalEnergyKeyword_RW",
               "L263.GlobalTechCSeq",
               "L263.SubsectorInterp",
               "L263.GlobalTechInputPMult",
              "L263.GlobalTechSCurve",
-             "L263.GlobalTechProfitShutdown"))
+             "L263.GlobalTechProfitShutdown",
+             "L263.StubTechProd_RW",
+             "L263.PerCapitaBased_RW",
+             "L263.BaseService_RW",
+             "L263.PriceElasticity_RW"))
   } else if(command == driver.DECLARE_OUTPUTS) {
     return(c(XML = "Weathering.xml"))
   } else if(command == driver.MAKE) {
@@ -49,16 +55,24 @@ module_energy_batch_Weathering_xml <- function(command, ...) {
     L263.GlobalTechShrwt_C <- get_data(all_data, "L263.GlobalTechShrwt_C")
     L263.RsrcPrice <- get_data(all_data, "L263.RsrcPrice")
     L263.WeatheringRsrcMax <- get_data(all_data, "L263.WeatheringRsrcMax")
+    L263.FinalEnergyKeyword_RW <- get_data(all_data, "L263.FinalEnergyKeyword_RW")
+    L263.CarbonCoef_RW <- get_data(all_data, "L263.CarbonCoef_RW")
     L263.GlobalTechCSeq <- get_data(all_data, "L263.GlobalTechCSeq")
     L263.SubsectorInterp <- get_data(all_data, "L263.SubsectorInterp")
     L263.GlobalTechInputPMult <- get_data(all_data, "L263.GlobalTechInputPMult")
     L263.GlobalTechSCurve <- get_data(all_data, "L263.GlobalTechSCurve")
     L263.GlobalTechProfitShutdown <- get_data(all_data, "L263.GlobalTechProfitShutdown")
+    L263.StubTechProd_RW <- get_data(all_data, "L263.StubTechProd_RW")
+    L263.PerCapitaBased_RW <- get_data(all_data, "L263.PerCapitaBased_RW")
+    L263.BaseService_RW <- get_data(all_data, "L263.BaseService_RW")
+    L263.PriceElasticity_RW <- get_data(all_data, "L263.PriceElasticity_RW")
     # ===================================================
 
     # Produce outputs
     create_xml("Weathering.xml") %>%
+      add_xml_data(L263.CarbonCoef_RW, "CarbonCoef") %>%
       add_xml_data(L263.Rsrc, "RenewRsrc") %>%
+      add_xml_data(L263.FinalEnergyKeyword_RW, "FinalEnergyKeyword") %>%
       add_node_equiv_xml("resource") %>%
       add_node_equiv_xml("subresource") %>%
       add_node_equiv_xml("technology") %>%
@@ -71,6 +85,10 @@ module_energy_batch_Weathering_xml <- function(command, ...) {
       add_xml_data(L263.GlobalTechCoef_C, "GlobalTechCoef") %>%
       add_xml_data(L263.GlobalTechCost_C, "GlobalTechCost") %>%
       add_xml_data(L263.GlobalTechShrwt_C, "GlobalTechShrwt") %>%
+      add_xml_data(L263.StubTechProd_RW, "StubTechProd") %>%
+      add_xml_data(L263.PerCapitaBased_RW, "PerCapitaBased") %>%
+      add_xml_data(L263.BaseService_RW, "BaseService") %>%
+      add_xml_data(L263.PriceElasticity_RW, "PriceElasticity") %>%
       add_xml_data(L263.RsrcPrice, "RenewRsrcPrice") %>%
       add_xml_data(L263.WeatheringRsrcMax, "GrdRenewRsrcMax") %>%
       add_xml_data(L263.SubsectorInterp, "SubsectorInterp") %>%
@@ -79,7 +97,8 @@ module_energy_batch_Weathering_xml <- function(command, ...) {
       add_xml_data(L263.GlobalTechSCurve, "GlobalTechSCurve") %>%
       add_xml_data(L263.GlobalTechProfitShutdown, "GlobalTechProfitShutdown") %>%
       add_precursors("L263.Rsrc", "L263.RsrcCurves_C", "L263.ResTechShrwt_C", "L263.Supplysector_C", "L263.SubsectorLogit_C", "L263.SubsectorShrwtFllt_C", "L263.StubTech_C", "L263.GlobalTechCoef_C","L263.GlobalTechCost_C", "L263.GlobalTechShrwt_C","L263.RsrcPrice","L263.WeatheringRsrcMax","L263.GlobalTechCSeq","L263.SubsectorInterp",
-                     "L263.GlobalTechInputPMult","L263.GlobalTechProfitShutdown","L263.GlobalTechSCurve") ->
+                     "L263.GlobalTechInputPMult","L263.GlobalTechProfitShutdown","L263.GlobalTechSCurve","L263.CarbonCoef_RW","L263.FinalEnergyKeyword_RW",
+                     "L263.StubTechProd_RW", "L263.PerCapitaBased_RW", "L263.BaseService_RW", "L263.PriceElasticity_RW") ->
       Weathering.xml
 
     return_data(Weathering.xml)
