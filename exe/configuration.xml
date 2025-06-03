@@ -104,16 +104,14 @@
 
         <Value name = "prune_ag">../input/gcamdata/xml/All/prune_empty_ag.xml</Value>
 
-		<Value name = "solver">../input/solution/cal_broyden_config.xml</Value>
-
 		<!-- Testing CO2 tax for CDR -->
 		<Value name = "Tax">../input/gcamdata/xml/All/Tax_Select_CO2_Reg.xml</Value>
-
 		<!-- DAC CDR -->
 		<!--Value name = "DAC">../input/gcamdata/xml/All/dac_ssp2.xml</Value-->
-
 		<!-- WEATHERING CDR -->
 		<Value name = "RockWeathering">../input/gcamdata/xml/All/Weathering.xml</Value>
+
+		<Value name = "solver">../input/solution/cal_broyden_config.xml</Value>
 		
 		<!-- India specific parameters (Don't change!!) -->
 		<!-- Socioeconomics -->
@@ -194,7 +192,7 @@
 		<Value name="carbon-output-start-year">1705</Value>
 		<Value name="climateOutputInterval">5</Value>
 		<Value name="parallel-grain-size">50</Value>
-		<Value name="stop-period">7</Value>
+		<Value name="stop-period">11</Value>
 		<!--Value name="stop-year">2020</Value-->
 		<Value name="restart-period">-1</Value>
 		<Value name="restart-year">-1</Value>

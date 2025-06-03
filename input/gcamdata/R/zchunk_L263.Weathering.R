@@ -1,6 +1,6 @@
 # Copyright 2019 Battelle Memorial Institute; see the LICENSE file.
 
-#' module_energy_L263.Cstorage
+#' module_energy_L263.Weathering
 #'
 #' Calculate carbon storage resource supply curves, shareweights, technology coefficients and costs, and other carbon storage information.
 #'
@@ -35,8 +35,10 @@
 module_energy_L263.Weathering <- function(command, ...) {
   if(command == driver.DECLARE_INPUTS) {
     return(c(FILE = "common/GCAM_region_names",
+             FILE = "energy/calibrated_techs_cdr",
              FILE = "energy/A63.rsrc_info",
              FILE = "energy/A63.sector",
+             FILE = "energy/A63.demand",
              FILE = "energy/A63.subsector_logit",
              FILE = "energy/A63.subsector_shrwt",
              FILE = "energy/A63.globaltech_coef",
@@ -69,7 +71,11 @@ module_energy_L263.Weathering <- function(command, ...) {
              "L263.GlobalTechSCurve",
              "L263.GlobalTechProfitShutdown",
              "L263.CarbonCoef_RW",
-             "L263.FinalEnergyKeyword_RW"))
+             "L263.FinalEnergyKeyword_RW",
+             "L263.StubTechProd_RW",
+             "L263.PerCapitaBased_RW",
+             "L263.BaseService_RW",
+             "L263.PriceElasticity_RW"))
   } else if(command == driver.MAKE) {
 
     all_data <- list(...)[[1]]
@@ -88,6 +94,8 @@ module_energy_L263.Weathering <- function(command, ...) {
     A63.globaltech_retirement <- get_data(all_data, "energy/A63.globaltech_retirement", strip_attributes = TRUE)
     L163.RsrcCurves_Mt <- get_data(all_data, "L163.RsrcCurves_Mt", strip_attributes = TRUE)
     A63.PrimaryFuelCCoef <- get_data(all_data, "energy/A63.PrimaryFuelCCoef", strip_attributes = TRUE)
+    calibrated_techs <- get_data(all_data, "energy/calibrated_techs_cdr", strip_attributes = TRUE)
+    A63.demand <- get_data(all_data, "energy/A63.demand", strip_attributes = TRUE)
 
     # ===================================================
 
@@ -334,6 +342,55 @@ module_energy_L263.Weathering <- function(command, ...) {
       select(LEVEL2_DATA_NAMES[["GlobalTechCSeq"]]) ->
       L263.GlobalTechCSeq
 
+    #Calibration and region-specific data
+    # L263.StubTechProd_RW: calibrated RW sequestration (Setting it to 0 since no RW technology is known to have been used historically)
+    calibrated_techs %>%
+      filter(calibration == "input") %>% # Only take the tech IDs where the calibration is identified as input
+      select(sector, supplysector, subsector, technology) %>%
+      distinct ->
+      calibrated_techs_export # temporary tibble
+
+    L163.out_Mt_R_RW_Yh <- L163.RsrcCurves_Mt %>%
+      group_by(GCAM_region_ID) %>%
+      summarise(Cstorage = sum(available)) %>%
+      ungroup() %>%
+      mutate(sector = "CO2 removal",
+             year = max(MODEL_BASE_YEARS),
+             value = Cstorage*0) %>%
+      select(GCAM_region_ID, sector, year, value)
+
+    L163.out_Mt_R_RW_Yh %>%
+      filter(year %in% MODEL_BASE_YEARS) %>%
+      mutate(calOutputValue = round(value, energy.DIGITS_CALOUTPUT)) %>%
+      left_join_error_no_match(GCAM_region_names, by = "GCAM_region_ID") %>%
+      left_join_error_no_match(calibrated_techs_export, by = "sector") %>%
+      mutate(stub.technology = technology,
+             share.weight.year = year,
+             subs.share.weight = if_else(calOutputValue > 0, 1, 0),
+             tech.share.weight = subs.share.weight) %>%
+      select(LEVEL2_DATA_NAMES[["StubTechProd"]]) ->
+      L263.StubTechProd_RW
+
+    # L263.PerCapitaBased_RW: per-capita based flag for RW exports final demand.  Note that this should be zero as the amount of RW shouldn't be explicitly tied to population
+    A63.demand %>%
+      write_to_all_regions(LEVEL2_DATA_NAMES[["PerCapitaBased"]], GCAM_region_names) ->
+      L263.PerCapitaBased_RW
+
+
+    #     L263.BaseService_RW: base-year service output of RW (Zero)
+    L263.StubTechProd_RW %>%
+      select(region, year, base.service = calOutputValue) %>%
+      mutate(energy.final.demand = A63.demand[["energy.final.demand"]]) ->
+      L263.BaseService_RW
+
+    # L263.PriceElasticity_RW: price elasticity (zero to represent the backstop nature of RW technology)
+    A63.demand %>%
+      write_to_all_regions(LEVEL2_DATA_NAMES[["PriceElasticity"]][LEVEL2_DATA_NAMES[["PriceElasticity"]] != "year"], GCAM_region_names) %>%
+      repeat_add_columns(tibble(year = MODEL_FUTURE_YEARS)) %>%
+      select(LEVEL2_DATA_NAMES[["PriceElasticity"]]) ->
+      L263.PriceElasticity_RW
+
+
     # ===================================================
 
     L263.Rsrc %>%
@@ -508,11 +565,45 @@ module_energy_L263.Weathering <- function(command, ...) {
       add_precursors("energy/A63.PrimaryFuelCCoef", "common/GCAM_region_names") ->
       L263.CarbonCoef_RW
 
+    L263.PerCapitaBased_RW %>%
+      add_title("per-capita based flag for RW exports final demand") %>%
+      add_units("NA") %>%
+      add_comments("Per-capita based flags for RW from A63.demand are expanded into all GCAM regions") %>%
+      add_legacy_name("L263.PerCapitaBased_RW") %>%
+      add_precursors("energy/A63.demand", "common/GCAM_region_names") ->
+      L263.PerCapitaBased_RW
+
+
+    L263.PriceElasticity_RW %>%
+      add_title("price elasticity for RW") %>%
+      add_units("Unitless") %>%
+      add_comments("The elasticity values from A63.demand are expanded into all GCAM_regions") %>%
+      add_legacy_name("L263.PriceElasticity_RW") %>%
+      add_precursors("energy/A63.demand", "common/GCAM_region_names") ->
+      L263.PriceElasticity_RW
+
+    L263.StubTechProd_RW %>%
+      add_title("calibrated cdr values") %>%
+      add_units("Mt") %>%
+      add_comments("Values are calculated using L163.out_Mt_R_RW_Yh then added GCAM region information and supplysector, subsector, and technology information") %>%
+      add_legacy_name("L263.StubTechProd_RW") %>%
+      add_precursors("energy/calibrated_techs_cdr", "L163.RsrcCurves_Mt", "common/GCAM_region_names") ->
+      L263.StubTechProd_RW
+
+    L263.BaseService_RW %>%
+      add_title("base-year service output of RW") %>%
+      add_units("Mt") %>%
+      add_comments("Transformed from L263.StubTechProd_RW by adding energy.final.demand from A63.demand") %>%
+      add_legacy_name("L263.BaseService_RW") %>%
+      add_precursors("energy/A63.demand", "energy/calibrated_techs_cdr", "L163.RsrcCurves_Mt", "common/GCAM_region_names") ->
+      L263.BaseService_RW
+
 
     return_data(L263.Rsrc, L263.RsrcCurves_C, L263.ResTechShrwt_C, L263.Supplysector_C, L263.SubsectorLogit_C, L263.SubsectorShrwtFllt_C, L263.StubTech_C, L263.GlobalTechCoef_C, L263.GlobalTechCost_C, L263.GlobalTechShrwt_C, L263.RsrcCurves_C_high, L263.RsrcCurves_C_low, L263.RsrcCurves_C_lowest,L263.RsrcPrice,L263.WeatheringRsrcMax,L263.GlobalTechCSeq,L263.SubsectorInterp,
                 L263.GlobalTechInputPMult,
-                L263.GlobalTechSCurve,L263.GlobalTechProfitShutdown,
-                L263.FinalEnergyKeyword_RW, L263.CarbonCoef_RW)
+                L263.GlobalTechSCurve, L263.GlobalTechProfitShutdown,
+                L263.FinalEnergyKeyword_RW, L263.CarbonCoef_RW,
+                L263.PerCapitaBased_RW, L263.PriceElasticity_RW, L263.StubTechProd_RW, L263.BaseService_RW)
   } else {
     stop("Unknown command")
   }
