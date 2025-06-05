@@ -6,6 +6,6 @@
 supplysector,subsector,year.fillout,share.weight,logit.type
 surface carbon-storage,inorganic-surface-storage,start-year,1,
 CO2 removal,rock weathering,start-year,0,
-CO2 removal,rock weathering,2020,0,
+CO2 removal,rock weathering,2020,1,
 CO2 removal,rock weathering,2050,1,
 airCO2,airCO2,start-year,1,
