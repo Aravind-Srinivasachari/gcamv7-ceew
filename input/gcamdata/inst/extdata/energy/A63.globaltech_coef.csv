@@ -1,6 +1,6 @@
 # File: A63.globaltech_coef.csv
 # Title: Carbon storage global technology coefficient
-# Units: Unitless
+# Units: Unitless | except - elec_td_ind - EJ/MtC, trn_freight - EJ/MtC or tonne-km/kgC, price.unit.conversion for freight - 1975$/tonne-km
 # Column types: ccccnnnnnn 
 # ----------
 supplysector,subsector,technology,minicam.energy.input,price.unit.conversion,1971,2015,2020,2050,2100

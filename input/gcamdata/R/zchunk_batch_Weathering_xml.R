@@ -14,8 +14,7 @@
 module_energy_batch_Weathering_xml <- function(command, ...) {
   if(command == driver.DECLARE_INPUTS) {
     return(c("L263.Rsrc",
-              # "L263.RsrcCurves_C",
-              "L263.RsrcCurves_C_high",
+              "L263.RsrcCurves_C",
               "L263.ResTechShrwt_C",
               "L263.Supplysector_C",
               "L263.SubsectorLogit_C",
@@ -30,12 +29,6 @@ module_energy_batch_Weathering_xml <- function(command, ...) {
               "L263.SubsectorInterp",
               "L263.GlobalTechInputPMult",
              "L263.GlobalTechSCurve",
-             "L263.FinalEnergyKeyword_RW",
-             "L263.CarbonCoef_RW",
-             # "L263.StubTechProd_RW",
-             # "L263.PerCapitaBased_RW",
-             # "L263.BaseService_RW",
-             # "L263.PriceElasticity_RW",
              "L263.GlobalTechProfitShutdown"))
   } else if(command == driver.DECLARE_OUTPUTS) {
     return(c(XML = "Weathering.xml"))
@@ -45,8 +38,7 @@ module_energy_batch_Weathering_xml <- function(command, ...) {
 
     # Load required inputs
     L263.Rsrc <- get_data(all_data, "L263.Rsrc")
-    # L263.RsrcCurves_C <- get_data(all_data, "L263.RsrcCurves_C")
-    L263.RsrcCurves_C <- get_data(all_data, "L263.RsrcCurves_C_high")
+    L263.RsrcCurves_C <- get_data(all_data, "L263.RsrcCurves_C")
     L263.ResTechShrwt_C <- get_data(all_data, "L263.ResTechShrwt_C")
     L263.Supplysector_C <- get_data(all_data, "L263.Supplysector_C")
     L263.SubsectorLogit_C <- get_data(all_data, "L263.SubsectorLogit_C")
@@ -62,17 +54,10 @@ module_energy_batch_Weathering_xml <- function(command, ...) {
     L263.GlobalTechInputPMult <- get_data(all_data, "L263.GlobalTechInputPMult")
     L263.GlobalTechSCurve <- get_data(all_data, "L263.GlobalTechSCurve")
     L263.GlobalTechProfitShutdown <- get_data(all_data, "L263.GlobalTechProfitShutdown")
-    L263.CarbonCoef_RW <- get_data(all_data, "L263.CarbonCoef_RW")
-    L263.FinalEnergyKeyword_RW <- get_data(all_data, "L263.FinalEnergyKeyword_RW")
-    # L263.StubTechProd_RW <- get_data(all_data, "L263.StubTechProd_RW")
-    # L263.PerCapitaBased_RW <- get_data(all_data, "L263.PerCapitaBased_RW")
-    # L263.BaseService_RW <- get_data(all_data, "L263.BaseService_RW")
-    # L263.PriceElasticity_RW <- get_data(all_data, "L263.PriceElasticity_RW")
-     # ===================================================
+    # ===================================================
 
     # Produce outputs
     create_xml("Weathering.xml") %>%
-      add_xml_data(L263.CarbonCoef_RW, "CarbonCoef") %>%
       add_xml_data(L263.Rsrc, "RenewRsrc") %>%
       add_node_equiv_xml("resource") %>%
       add_node_equiv_xml("subresource") %>%
@@ -80,7 +65,6 @@ module_energy_batch_Weathering_xml <- function(command, ...) {
       add_xml_data(L263.RsrcCurves_C, "GrdRenewRsrcCurves") %>%
       add_xml_data(L263.ResTechShrwt_C, "ResTechShrwt") %>%
       add_logit_tables_xml(L263.Supplysector_C, "Supplysector") %>%
-      add_xml_data(L263.FinalEnergyKeyword_RW, "FinalEnergyKeyword") %>%
       add_logit_tables_xml(L263.SubsectorLogit_C, "SubsectorLogit") %>%
       add_xml_data(L263.SubsectorShrwtFllt_C, "SubsectorShrwtFllt") %>%
       add_xml_data(L263.StubTech_C, "StubTech") %>%
@@ -92,16 +76,10 @@ module_energy_batch_Weathering_xml <- function(command, ...) {
       add_xml_data(L263.SubsectorInterp, "SubsectorInterp") %>%
       add_xml_data(L263.GlobalTechCSeq, "GlobalTechCSeq") %>%
       add_xml_data(L263.GlobalTechInputPMult, "GlobalTechInputPMult") %>%
-      # add_xml_data(L263.StubTechProd_RW, "StubTechProd") %>%
-      # add_xml_data(L263.PerCapitaBased_RW, "PerCapitaBased") %>%
-      # add_xml_data(L263.BaseService_RW, "BaseService") %>%
-      # add_xml_data(L263.PriceElasticity_RW, "PriceElasticity") %>%
       add_xml_data(L263.GlobalTechSCurve, "GlobalTechSCurve") %>%
       add_xml_data(L263.GlobalTechProfitShutdown, "GlobalTechProfitShutdown") %>%
-      add_precursors("L263.Rsrc", "L263.RsrcCurves_C_high", "L263.ResTechShrwt_C", "L263.Supplysector_C", "L263.SubsectorLogit_C", "L263.SubsectorShrwtFllt_C", "L263.StubTech_C", "L263.GlobalTechCoef_C","L263.GlobalTechCost_C", "L263.GlobalTechShrwt_C","L263.RsrcPrice","L263.WeatheringRsrcMax","L263.GlobalTechCSeq","L263.SubsectorInterp",
-                     "L263.GlobalTechInputPMult","L263.GlobalTechProfitShutdown","L263.GlobalTechSCurve",
-                     # "L263.StubTechProd_RW","L263.PerCapitaBased_RW","L263.BaseService_RW","L263.PriceElasticity_RW",
-                     "L263.FinalEnergyKeyword_RW","L263.CarbonCoef_RW") ->
+      add_precursors("L263.Rsrc", "L263.RsrcCurves_C", "L263.ResTechShrwt_C", "L263.Supplysector_C", "L263.SubsectorLogit_C", "L263.SubsectorShrwtFllt_C", "L263.StubTech_C", "L263.GlobalTechCoef_C","L263.GlobalTechCost_C", "L263.GlobalTechShrwt_C","L263.RsrcPrice","L263.WeatheringRsrcMax","L263.GlobalTechCSeq","L263.SubsectorInterp",
+                     "L263.GlobalTechInputPMult","L263.GlobalTechProfitShutdown","L263.GlobalTechSCurve") ->
       Weathering.xml
 
     return_data(Weathering.xml)

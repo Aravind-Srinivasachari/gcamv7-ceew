@@ -1,9 +1,7 @@
 # File: A63.sector.csv
 # Title: surface carbon storage supplysector info
 # Units: MtC for output unit; 1975$/kg for price unit; unitless for logit exponent
-# Column types: ccccicc
+# Column types: ccccic
 # ----------
-supplysector,output.unit,input.unit,price.unit,logit.exponent,final.energy,logit.type
-surface carbon-storage,Mt,Mt,1975$/kg,-6,,absolute-cost-logit
-CO2 removal,Mt,EJ or Mt,1975$/kg,-3,industry,
-airCO2,Mt,EJ or Mt,1975$/kg,-3,industry,
+supplysector,output.unit,input.unit,price.unit,logit.exponent,logit.type
+surface carbon-storage,Mt,Mt,1975$/kg,-6,absolute-cost-logit

@@ -1,7 +1,7 @@
 # File: A63.rsrc_curves.csv
-# Title: Carbon storage resource supply curve points
+# Title: Regional CDR/year using Rock Weathering (Basalt) and the costs associated with it. Note: Electricity and Transportation costs are excluded
 # Comments: From Beerling et al (2021) source data.  https://doi.org/10.1038/s41586-020-2448-9 Median 2 C scenario. Regions not included in the Beerling study were scaled from those that were using total removal potential data from Streffler et al 2018
-# Units: available: MtC cost: $1975/kg
+# Units: available: MtC cost: $1975/kgC
 # Column types: ccccnn
 # ----------
 resource,subresource,grade,region,available,cost
